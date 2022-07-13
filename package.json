@@ -1,0 +1,39 @@
+{
+  "name": "kf-press",
+  "version": "0.0.1",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node dist/index.js",
+    "build": "tsc",
+    "dev": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pubpub/kf-press.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pubpub/kf-press/issues"
+  },
+  "homepage": "https://github.com/pubpub/kf-press#readme",
+  "dependencies": {
+    "@koa/router": "^11.0.1",
+    "@sentry/node": "^7.6.0",
+    "aws-sdk": "^2.1170.0",
+    "dotenv": "^16.0.1",
+    "koa": "^2.13.4",
+    "koa-body": "^5.0.0",
+    "pagedjs": "^0.3.5",
+    "pagedjs-cli": "github:pubpub/pagedjs-cli#198b65ce0e3e089176c294de7a855e8da8a46a23",
+    "tempy": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.13.4",
+    "@types/koa__router": "^8.0.11",
+    "typescript": "^4.7.4"
+  }
+}

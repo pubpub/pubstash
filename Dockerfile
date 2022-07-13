@@ -1,9 +1,9 @@
-FROM denoland/deno:debian
+FROM node:18
 
 EXPOSE 8080
 
 RUN apt update \
-    && apt install -y nodejs npm wget gnupg \
+    && apt install -y wget gnupg libx11-xcb1 libxcb1 \
     && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
     && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
     && apt update \
@@ -13,17 +13,12 @@ RUN apt update \
 
 WORKDIR /usr/app
 
-RUN npm install pagedjs
-RUN npm install git+https://github.com/pubpub/pagedjs-cli#198b65ce0e3e089176c294de7a855e8da8a46a23
+COPY package.json .
 
-USER deno
+RUN npm i
 
-COPY deps.ts .
+COPY ./ .
 
-RUN deno cache deps.ts
+RUN npm run build
 
-ADD ./ /usr/app
-
-RUN deno cache main.ts
-
-CMD ["run", "--allow-net", "--allow-read", "--allow-write", "--allow-run", "main.ts"]
+CMD ["npm", "start"]

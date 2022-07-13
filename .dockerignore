@@ -1,0 +1,8 @@
+.env
+.env.sample
+.gitignore
+.vscode
+dist
+Dockerfile
+node_modules
+README.md
