@@ -1,2 +1,2 @@
-import "./S3";
-export { StorageRegistry } from "./registry";
+import "./S3.js";
+export { StorageRegistry } from "./registry.js";

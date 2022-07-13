@@ -1,8 +1,8 @@
 import type { S3 } from "aws-sdk";
 import { ReadStream } from "fs";
-import { assert } from "../debug";
-import { StorageRegistry } from "./registry";
-import { Storage } from "./types";
+import { assert } from "../debug.js";
+import { StorageRegistry } from "./registry.js";
+import { Storage } from "./types.js";
 
 type Maybe<T> = T | undefined;
 
@@ -45,7 +45,7 @@ export class AWSS3Storage implements Storage {
 
   async s3() {
     return (this.#s3 ??= import("aws-sdk").then(
-      ({ S3 }) =>
+      ({ default: { S3 } }) =>
         new S3({
           region: this.#config.region,
           credentials: {

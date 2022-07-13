@@ -6,16 +6,16 @@ import Koa from "koa";
 import koaBody from "koa-body";
 import { temporaryFile } from "tempy";
 import { promisify } from "util";
-import { assert } from "./debug";
-import { StorageRegistry } from "./storage";
+import { assert } from "./debug.js";
+import { StorageRegistry } from "./storage/index.js";
 
-const storageKind = process.env.STORAGE_KIND;
+const storageProvider = process.env.STORAGE_PROVIDER;
 assert(
-  storageKind !== undefined,
-  "STORAGE_KIND environment variable is required"
+  storageProvider !== undefined,
+  "STORAGE_PROVIDER environment variable is required"
 );
-const storageFactory = StorageRegistry.get(storageKind);
-assert(storageFactory !== undefined, "Invalid STORAGE_KIND");
+const storageFactory = StorageRegistry.get(storageProvider);
+assert(storageFactory !== undefined, "Invalid STORAGE_PROVIDER");
 const storage = storageFactory();
 const port = process.env.PORT ? Number(process.env.PORT) : 8080;
 const exec = promisify(Proc.exec);

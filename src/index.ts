@@ -1,2 +1,2 @@
 import "dotenv/config";
-import "./main";
+import "./main.js";

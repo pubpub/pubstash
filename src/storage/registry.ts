@@ -1,4 +1,4 @@
-import { Storage } from "./types";
+import { Storage } from "./types.js";
 
 export type StorageRegistryKey = string;
 export type StorageFactory = () => Storage;
