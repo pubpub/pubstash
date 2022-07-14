@@ -51,17 +51,31 @@ async function convertToPDF(html: string) {
 const app = new Koa();
 const router = new Router();
 
-router.post("/convert", koaBody(), async (ctx) => {
-  switch (ctx.query.format) {
-    case "pdf": {
-      const url = await convertToPDF(ctx.request.body);
-      ctx.response.body = { url };
+router
+  .get("/", (ctx) => {
+    ctx.set("Content-Type", "text/html; charset=UTF-8");
+    ctx.body = `<html>
+  <head>
+    <title>pubstash</title>
+  </head>
+  <body>
+    <p>pubstash</p>
+  </body>
+</html>`;
+  })
+  .post("/convert", koaBody(), async (ctx) => {
+    switch (ctx.query.format) {
+      case "pdf": {
+        const url = await convertToPDF(ctx.request.body);
+        ctx.body = { url };
+        break;
+      }
+      default:
+        throw new InvalidParameterError(
+          "Missing or unsupported query parameter: format"
+        );
     }
-  }
-  throw new InvalidParameterError(
-    "Missing or unsupported query parameter: format"
-  );
-});
+  });
 
 app
   .use(async (_, next) => {

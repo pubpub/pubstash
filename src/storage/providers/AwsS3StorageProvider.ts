@@ -2,8 +2,15 @@ import type { S3 } from "aws-sdk";
 import { ReadStream } from "fs";
 import { Maybe } from "../../utils.js";
 import { StorageProvider } from "../StorageProvider.js";
+import { StorageProviderRegistry } from "../StorageProviderRegistry.js";
 
 export class AWSS3StorageProvider extends StorageProvider {
+  static key = "AWS-S3";
+
+  static {
+    StorageProviderRegistry.set(this.key, () => new AWSS3StorageProvider());
+  }
+
   #config;
   #s3: Maybe<Promise<S3>>;
 

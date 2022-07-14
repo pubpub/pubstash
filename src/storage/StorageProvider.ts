@@ -1,7 +1,6 @@
 import { ReadStream } from "fs";
 import { assert } from "../debug.js";
 import { has } from "../utils.js";
-import { StorageProviderRegistry } from "./StorageProviderRegistry.js";
 
 class NotImplementedException extends Error {
   name = "NotImplementedException";
@@ -9,9 +8,6 @@ class NotImplementedException extends Error {
 
 export class StorageProvider {
   static key: string;
-  static {
-    StorageProviderRegistry.set(this.key, () => new this());
-  }
 
   async upload(key: string, stream: ReadStream): Promise<string> {
     throw new NotImplementedException(

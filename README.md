@@ -44,7 +44,7 @@ npm start
 ### Docker
 
 ```sh
-docker build -t kf-press . && docker run -it --init -p 8080:8080 kf-press
+docker build -t pubstash . && docker run --env-file .env -it --init -p 8080:8080 pubstash
 ```
 
 Make a POST request to `localhost:8080/convert?format=pdf` where the request body is HTML to convert to a PDF.
