@@ -15,7 +15,7 @@ const storageProvider = storageProviderFactory();
 const port = process.env.PORT ? Number(process.env.PORT) : 8080;
 const exec = promisify(Proc.exec);
 
-function createKey(length = 32) {
+function createStorageKey(length = 32) {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
   let key = "";
   for (let index = 0; index < length; index += 1) {
@@ -25,7 +25,7 @@ function createKey(length = 32) {
 }
 
 async function uploadToStorage(path: string) {
-  const key = createKey();
+  const key = createStorageKey();
   const stream = createReadStream(path);
   return await storageProvider.upload(key, stream);
 }

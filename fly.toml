@@ -1,6 +1,6 @@
-# fly.toml file generated for kf-press on 2022-07-07T10:49:04-04:00
+# fly.toml file generated for pubstash on 2022-07-14T12:04:49-04:00
 
-app = "kf-press"
+app = "pubstash"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []

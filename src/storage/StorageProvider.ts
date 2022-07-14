@@ -1,7 +1,7 @@
 import { ReadStream } from "fs";
-import { assert } from "../debug";
-import { has } from "../utils";
-import { StorageProviderRegistry } from "./StorageProviderRegistry";
+import { assert } from "../debug.js";
+import { has } from "../utils.js";
+import { StorageProviderRegistry } from "./StorageProviderRegistry.js";
 
 class NotImplementedException extends Error {
   name = "NotImplementedException";

@@ -7,9 +7,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm run build && node dist/index.js",
+    "start": "node dist/index.js",
     "build": "tsc",
-    "dev": ""
+    "dev": "npm run build && npm run start"
   },
   "repository": {
     "type": "git",
