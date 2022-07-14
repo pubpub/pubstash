@@ -71,7 +71,7 @@ async function convertToPDF(html: string) {
     return uploadToStorage(tempOutputFilePath);
   } catch (_) {
     console.error(_);
-    throw new InternalError("There was a problem uploading the file to S3.");
+    throw new InternalError("There was a problem uploading the file.");
   }
 }
 const app = new Koa();

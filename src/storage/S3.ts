@@ -63,7 +63,7 @@ export class AWSS3Storage implements Storage {
         ACL: "public-read",
         Key: key,
         Body: stream,
-        Bucket: "assets.pubpub.org",
+        Bucket: this.#config.bucket,
       })
       .promise();
     return `${this.#config.baseUrl}/${key}`;
