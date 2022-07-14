@@ -6,18 +6,12 @@ import Koa from "koa";
 import koaBody from "koa-body";
 import { temporaryFile } from "tempy";
 import { promisify } from "util";
-import { assert } from "./debug.js";
 import { installSentry } from "./sentry.js";
-import { StorageRegistry } from "./storage/index.js";
+import { StorageProviderRegistry } from "./storage/index.js";
 
-const storageProvider = process.env.STORAGE_PROVIDER;
-assert(
-  storageProvider !== undefined,
-  "STORAGE_PROVIDER environment variable is required"
-);
-const storageFactory = StorageRegistry.get(storageProvider);
-assert(storageFactory !== undefined, "Invalid STORAGE_PROVIDER");
-const storage = storageFactory();
+const storageProviderKey = process.env.STORAGE_PROVIDER;
+const storageProviderFactory = StorageProviderRegistry.get(storageProviderKey!);
+const storageProvider = storageProviderFactory();
 const port = process.env.PORT ? Number(process.env.PORT) : 8080;
 const exec = promisify(Proc.exec);
 
@@ -33,7 +27,7 @@ function createKey(length = 32) {
 async function uploadToStorage(path: string) {
   const key = createKey();
   const stream = createReadStream(path);
-  return await storage.upload(key, stream);
+  return await storageProvider.upload(key, stream);
 }
 
 class InvalidParameterError extends Error {
@@ -86,4 +80,4 @@ if (process.env.NODE_ENV === "production") {
   installSentry(app);
 }
 
-console.log(`kf-press running at 0.0.0.0:${port}`);
+console.log(`pubstash running at 0.0.0.0:${port}`);

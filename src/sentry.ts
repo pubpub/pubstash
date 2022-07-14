@@ -5,7 +5,7 @@ export function installSentry(app: Application, environment = "prod") {
   const dsn = process.env.SENTRY_DSN;
   if (dsn === undefined) {
     console.warn(
-      "Failed to enable monitoring: missing environment variable: SENTRY_DSN"
+      "Failed to enable monitoring: missing environment variable SENTRY_DSN"
     );
     return;
   }

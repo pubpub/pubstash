@@ -1,33 +1,18 @@
 import type { S3 } from "aws-sdk";
 import { ReadStream } from "fs";
-import { assert } from "../debug.js";
-import { has, Maybe } from "../utils.js";
-import { StorageRegistry } from "./registry.js";
-import { Storage } from "./types.js";
+import { Maybe } from "../../utils.js";
+import { StorageProvider } from "../StorageProvider.js";
 
-export class AWSS3Storage implements Storage {
-  static {
-    StorageRegistry.set("AWS-S3", () => new AWSS3Storage());
-  }
-
+export class AWSS3StorageProvider extends StorageProvider {
   #config;
   #s3: Maybe<Promise<S3>>;
 
   constructor() {
-    const bucket = process.env.AWS_S3_BUCKET;
-    const region = process.env.AWS_S3_REGION;
-    const accessKeyId = process.env.AWS_S3_ACCESS_KEY_ID;
-    const secretAccessKey = process.env.AWS_S3_SECRET_ACCESS_KEY;
-    assert(has(region), "Missing environment variable: AWS_S3_REGION");
-    assert(
-      has(accessKeyId),
-      "Missing environment variable: AWS_S3_ACCESS_KEY_ID"
-    );
-    assert(
-      has(secretAccessKey),
-      "Missing environment variable: AWS_S3_SECRET_ACCESS_KEY"
-    );
-    assert(has(bucket), "Missing environment variable: AWS_S3_BUCKET");
+    super();
+    const bucket = this.env("AWS_S3_BUCKET");
+    const region = this.env("AWS_S3_REGION");
+    const accessKeyId = this.env("AWS_S3_ACCESS_KEY_ID");
+    const secretAccessKey = this.env("AWS_S3_SECRET_ACCESS_KEY");
     this.#config = {
       bucket,
       region,
