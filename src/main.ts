@@ -9,6 +9,9 @@ import { promisify } from "util";
 import { installSentry } from "./sentry.js";
 import { StorageProviderRegistry } from "./storage/index.js";
 
+const convertBodyLimit = process.env.CONVERT_BODY_LIMIT
+  ? Number(process.env.CONVERT_BODY_LIMIT)
+  : 50_000;
 const storageProviderKey = process.env.STORAGE_PROVIDER;
 const storageProviderFactory = StorageProviderRegistry.get(storageProviderKey!);
 const storageProvider = storageProviderFactory();
@@ -63,7 +66,7 @@ router
   </body>
 </html>`;
   })
-  .post("/convert", koaBody(), async (ctx) => {
+  .post("/convert", koaBody({ textLimit: convertBodyLimit }), async (ctx) => {
     switch (ctx.query.format) {
       case "pdf": {
         const url = await convertToPDF(ctx.request.body);

@@ -8,6 +8,7 @@ Required environment variables:
 
 Optional environment variables:
 
+- `CONVERT_BODY_LIMIT` — (default: 50000) Upper limit in bytes of request body
 - `SENTRY_DSN` — Sentry.io data source name
 
 ### Storage Providers
