@@ -1,14 +1,9 @@
 import type { S3 } from "aws-sdk";
 import { ReadStream } from "fs";
 import { assert } from "../debug.js";
+import { has, Maybe } from "../utils.js";
 import { StorageRegistry } from "./registry.js";
 import { Storage } from "./types.js";
-
-type Maybe<T> = T | undefined;
-
-function has<T>(t: T | undefined): t is T {
-  return t !== undefined;
-}
 
 export class AWSS3Storage implements Storage {
   static {

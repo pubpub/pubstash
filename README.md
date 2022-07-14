@@ -4,7 +4,11 @@
 
 Required environment variables:
 
-- `STORAGE_PROVIDER` – One of `AWS-S3`, ...
+- `STORAGE_PROVIDER` — One of `AWS-S3`, ...
+
+Optional environment variables:
+
+- `SENTRY_DSN` — Sentry.io data source name
 
 ## Storage Providers
 

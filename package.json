@@ -1,5 +1,6 @@
 {
-  "name": "kf-press",
+  "name": "pubstash",
+  "private": true,
   "version": "0.0.1",
   "description": "",
   "type": "module",
@@ -12,17 +13,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pubpub/kf-press.git"
+    "url": "git+https://github.com/pubpub/pubstash.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/pubpub/kf-press/issues"
+    "url": "https://github.com/pubpub/pubstash/issues"
   },
-  "homepage": "https://github.com/pubpub/kf-press#readme",
+  "homepage": "https://github.com/pubpub/pubstash#readme",
   "dependencies": {
     "@koa/router": "^11.0.1",
     "@sentry/node": "^7.6.0",
+    "@sentry/tracing": "^7.6.0",
     "aws-sdk": "^2.1170.0",
     "dotenv": "^16.0.1",
     "koa": "^2.13.4",

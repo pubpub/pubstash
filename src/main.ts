@@ -7,6 +7,7 @@ import koaBody from "koa-body";
 import { temporaryFile } from "tempy";
 import { promisify } from "util";
 import { assert } from "./debug.js";
+import { installSentry } from "./sentry.js";
 import { StorageRegistry } from "./storage/index.js";
 
 const storageProvider = process.env.STORAGE_PROVIDER;
@@ -35,8 +36,9 @@ async function uploadToStorage(path: string) {
   return await storage.upload(key, stream);
 }
 
-class InternalError extends Error {
-  name = "InternalError";
+class InvalidParameterError extends Error {
+  name = "InvalidParameterError";
+  status = 400;
 }
 
 function spawnPagedProcess(inputFile: string, outputFile: string) {
@@ -45,34 +47,12 @@ function spawnPagedProcess(inputFile: string, outputFile: string) {
   );
 }
 
-async function runPaged(inputFile: string, outputFile: string) {
-  try {
-    await spawnPagedProcess(inputFile, outputFile);
-    return true;
-  } catch (_) {
-    console.error(_);
-    return false;
-  }
-}
-
 async function convertToPDF(html: string) {
   const tempInputFilePath = temporaryFile({ extension: ".html" });
   const tempOutputFilePath = temporaryFile({ extension: ".pdf" });
-
   await writeFile(tempInputFilePath, html);
-
-  const pagedSucceeded = await runPaged(tempInputFilePath, tempOutputFilePath);
-
-  if (!pagedSucceeded) {
-    throw new InternalError("There was a problem converting HTML to PDF.");
-  }
-
-  try {
-    return uploadToStorage(tempOutputFilePath);
-  } catch (_) {
-    console.error(_);
-    throw new InternalError("There was a problem uploading the file.");
-  }
+  await spawnPagedProcess(tempInputFilePath, tempOutputFilePath);
+  return uploadToStorage(tempOutputFilePath);
 }
 const app = new Koa();
 const router = new Router();
@@ -80,29 +60,30 @@ const router = new Router();
 router.post("/convert", koaBody(), async (ctx) => {
   switch (ctx.query.format) {
     case "pdf": {
-      try {
-        const url = await convertToPDF(ctx.request.body);
-        ctx.response.body = { url };
-      } catch ({ message }) {
-        ctx.response.body = { error: message };
-        ctx.response.status = 500;
-      }
+      const url = await convertToPDF(ctx.request.body);
+      ctx.response.body = { url };
     }
   }
-  ctx.response.status = 404;
+  throw new InvalidParameterError(
+    "Missing or unsupported query parameter: format"
+  );
 });
 
-// if (process.env.NODE_ENV === "production") {
-//   // The Sentry request handler must be the first middleware on the app
-//   Sentry.init({
-//     dsn: "https://abe1c84bbb3045bd982f9fea7407efaa@sentry.io/1505439",
-//     environment: isProd() ? "prod" : "dev",
-//     release: getAppCommit(),
-//   });
-//   app.use(Sentry.Handlers.requestHandler({ user: ["id", "slug"] }));
-//   app.use(enforce.HTTPS({ trustProtoHeader: true }));
-// }
+app
+  .use(async (_, next) => {
+    try {
+      await next();
+    } catch (error) {
+      (error as Record<string, unknown>).status ??= 500;
+      throw error;
+    }
+  })
+  .use(router.routes())
+  .use(router.allowedMethods())
+  .listen(port);
 
-app.use(router.routes()).use(router.allowedMethods()).listen(port);
+if (process.env.NODE_ENV === "production") {
+  installSentry(app);
+}
 
 console.log(`kf-press running at 0.0.0.0:${port}`);
