@@ -2,13 +2,25 @@ import Router from "@koa/router";
 import * as Proc from "child_process";
 import { createReadStream } from "fs";
 import { writeFile } from "fs/promises";
-import Koa from "koa";
+import Koa, { Context, Next } from "koa";
 import koaBody from "koa-body";
 import { temporaryFile } from "tempy";
 import { promisify } from "util";
 import { installSentry } from "./sentry.js";
 import { StorageProviderRegistry } from "./storage/index.js";
+import { has, Maybe } from "./utils.js";
 
+class InvalidParameterError extends Error {
+  name = "InvalidParameterError";
+  status = 400;
+}
+
+class InvalidAccessKeyError extends Error {
+  name = "InvalidAccessKeyError";
+  status = 401;
+}
+
+const accessKey = process.env.ACCESS_KEY;
 const convertBodyLimit = process.env.CONVERT_BODY_LIMIT
   ? Number(process.env.CONVERT_BODY_LIMIT)
   : 5e7;
@@ -33,11 +45,6 @@ async function uploadToStorage(path: string) {
   return await storageProvider.upload(key, stream);
 }
 
-class InvalidParameterError extends Error {
-  name = "InvalidParameterError";
-  status = 400;
-}
-
 function spawnPagedProcess(inputFile: string, outputFile: string) {
   return exec(
     `./node_modules/.bin/pagedjs-cli --noSandbox ${inputFile} -o ${outputFile}`
@@ -54,6 +61,15 @@ async function convertToPDF(html: string) {
 const app = new Koa();
 const router = new Router();
 
+function accessKeyAuth(key: Maybe<string>) {
+  return function accessKeyMiddleware(ctx: Context, next: Next) {
+    if (has(key) && key !== "" && ctx.request.get("Authorization") !== key) {
+      throw new InvalidAccessKeyError();
+    }
+    return next();
+  };
+}
+
 router
   .get("/", (ctx) => {
     ctx.set("Content-Type", "text/html; charset=UTF-8");
@@ -66,19 +82,24 @@ router
   </body>
 </html>`;
   })
-  .post("/convert", koaBody({ textLimit: convertBodyLimit }), async (ctx) => {
-    switch (ctx.query.format) {
-      case "pdf": {
-        const url = await convertToPDF(ctx.request.body);
-        ctx.body = { url };
-        break;
+  .post(
+    "/convert",
+    accessKeyAuth(accessKey),
+    koaBody({ textLimit: convertBodyLimit }),
+    async (ctx) => {
+      switch (ctx.query.format) {
+        case "pdf": {
+          const url = await convertToPDF(ctx.request.body);
+          ctx.body = { url };
+          break;
+        }
+        default:
+          throw new InvalidParameterError(
+            "Missing or unsupported query parameter: format"
+          );
       }
-      default:
-        throw new InvalidParameterError(
-          "Missing or unsupported query parameter: format"
-        );
     }
-  });
+  );
 
 app
   .use(async (_, next) => {
