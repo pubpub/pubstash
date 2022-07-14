@@ -1,6 +1,6 @@
 ## Getting Started
 
-## Environment Variables
+### Environment Variables
 
 Required environment variables:
 
@@ -10,9 +10,9 @@ Optional environment variables:
 
 - `SENTRY_DSN` — Sentry.io data source name
 
-## Storage Providers
+### Storage Providers
 
-### AWS-S3
+#### AWS-S3
 
 ```ts
 STORAGE_PROVIDER=AWS-S3
@@ -34,7 +34,9 @@ Optional environment variables:
 
 - `AWS_S3_ASSET_PROXY` — (default: `"https://s3.amazonaws.com/{AWS_S3_BUCKET}"`) override the default URL returned by `POST /convert`
 
-### Local
+### Local Dev
+
+Create a `.env` file containing environment variables required by your desired storage provider, then run:
 
 ```ts
 npm i
@@ -43,8 +45,13 @@ npm start
 
 ### Docker
 
+Create a `.env` file containing environment variables required by your desired storage provider, then run:
+
 ```sh
-docker build -t pubstash . && docker run --env-file .env -it --init -p 8080:8080 pubstash
+docker build -t pubstash .
+docker run --env-file .env -it --init -p 8080:8080 pubstash
 ```
+
+## Usage
 
 Make a POST request to `localhost:8080/convert?format=pdf` where the request body is HTML to convert to a PDF.
