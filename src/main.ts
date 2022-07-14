@@ -11,7 +11,7 @@ import { StorageProviderRegistry } from "./storage/index.js";
 
 const convertBodyLimit = process.env.CONVERT_BODY_LIMIT
   ? Number(process.env.CONVERT_BODY_LIMIT)
-  : 50_000;
+  : 5e7;
 const storageProviderKey = process.env.STORAGE_PROVIDER;
 const storageProviderFactory = StorageProviderRegistry.get(storageProviderKey!);
 const storageProvider = storageProviderFactory();
