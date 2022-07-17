@@ -42,7 +42,7 @@ function createStorageKey(length = 32) {
 async function uploadToStorage(path: string) {
   const key = createStorageKey();
   const stream = createReadStream(path);
-  return await storageProvider.upload(key, stream);
+  return storageProvider.upload(key, stream);
 }
 
 function spawnPagedProcess(inputFile: string, outputFile: string) {
