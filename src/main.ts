@@ -10,6 +10,8 @@ import { installSentry } from "./sentry.js";
 import { StorageProviderRegistry } from "./storage/index.js";
 import { has, Maybe } from "./utils.js";
 
+let conversionCount = 0;
+
 class InvalidParameterError extends Error {
   name = "InvalidParameterError";
   status = 400;
@@ -87,17 +89,38 @@ router
     accessKeyAuth(accessKey),
     koaBody({ textLimit: convertBodyLimit }),
     async (ctx) => {
-      switch (ctx.query.format) {
-        case "pdf": {
-          const url = await convertToPDF(ctx.request.body);
-          ctx.body = { url };
-          break;
+      const id = conversionCount++;
+      const start = performance.now();
+      console.log(
+        `convert start ${id} format=${ctx.query.format} byte_length=${ctx.request.length}`
+      );
+      try {
+        switch (ctx.query.format) {
+          case "pdf": {
+            const url = await convertToPDF(ctx.request.body);
+            ctx.body = { url };
+            break;
+          }
+          default:
+            throw new InvalidParameterError(
+              "Missing or unsupported query parameter: format"
+            );
         }
-        default:
-          throw new InvalidParameterError(
-            "Missing or unsupported query parameter: format"
-          );
+      } catch (error) {
+        console.log(
+          `convert failure ${id} duration=${(
+            (performance.now() - start) /
+            1000
+          ).toFixed(3)}s`
+        );
+        throw error;
       }
+      console.log(
+        `convert success ${id} duration=${(
+          (performance.now() - start) /
+          1000
+        ).toFixed(3)}s`
+      );
     }
   );
 

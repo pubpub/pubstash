@@ -1,4 +1,4 @@
-# fly.toml file generated for pubstash on 2022-07-14T12:04:49-04:00
+# fly.toml file generated for pubstash on 2022-07-14T17:45:16-04:00
 
 app = "pubstash"
 kill_signal = "SIGINT"

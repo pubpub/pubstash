@@ -8,7 +8,7 @@ Required environment variables:
 
 Optional environment variables:
 
-- `ACCESS_TOKEN` — a simple token to authenticate consumers. Must be incldued in an `Authorization` header to the `/convert` endpoint if specified, otherwise the server will respond with a 401: Unauthorized. **Placeholder until proper auth is implemented.**
+- `ACCESS_KEY` — a simple token to authenticate consumers. Must be incldued in an `Authorization` header to the `/convert` endpoint if specified, otherwise the server will respond with a 401: Unauthorized. **Placeholder until proper auth is implemented.**
 - `CONVERT_BODY_LIMIT` — (default: 50mb) Integer expressing an upper limit in bytes of request body for the `/convert` endpoint
 - `SENTRY_DSN` — Sentry.io data source name
 
