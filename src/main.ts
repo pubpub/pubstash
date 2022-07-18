@@ -41,10 +41,10 @@ function createStorageKey(length = 32) {
   return key;
 }
 
-async function uploadToStorage(path: string) {
+async function uploadToStorage(path: string, suffix = "") {
   const key = createStorageKey();
   const stream = createReadStream(path);
-  return storageProvider.upload(key, stream);
+  return storageProvider.upload(`${key}${suffix}`, stream);
 }
 
 function spawnPagedProcess(inputFile: string, outputFile: string) {
@@ -58,7 +58,7 @@ async function convertToPDF(html: string) {
   const tempOutputFilePath = temporaryFile({ extension: ".pdf" });
   await writeFile(tempInputFilePath, html);
   await spawnPagedProcess(tempInputFilePath, tempOutputFilePath);
-  return uploadToStorage(tempOutputFilePath);
+  return uploadToStorage(tempOutputFilePath, ".pdf");
 }
 const app = new Koa();
 const router = new Router();
