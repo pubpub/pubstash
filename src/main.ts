@@ -1,10 +1,9 @@
 import Router from "@koa/router";
 import * as Proc from "child_process";
 import { createReadStream } from "fs";
-import { writeFile } from "fs/promises";
 import Koa, { Context, Next } from "koa";
 import koaBody from "koa-body";
-import { temporaryFile } from "tempy";
+import { temporaryFileTask, temporaryWriteTask } from "tempy";
 import { promisify } from "util";
 import { installSentry } from "./sentry.js";
 import { StorageProviderRegistry } from "./storage/index.js";
@@ -54,11 +53,12 @@ function spawnPagedProcess(inputFile: string, outputFile: string) {
 }
 
 async function convertToPDF(html: string) {
-  const tempInputFilePath = temporaryFile({ extension: ".html" });
-  const tempOutputFilePath = temporaryFile({ extension: ".pdf" });
-  await writeFile(tempInputFilePath, html);
-  await spawnPagedProcess(tempInputFilePath, tempOutputFilePath);
-  return uploadToStorage(tempOutputFilePath, ".pdf");
+  return temporaryWriteTask(html, async (tempInputFilePath) => {
+    return temporaryFileTask(async (tempOutputFilePath) => {
+      await spawnPagedProcess(tempInputFilePath, tempOutputFilePath);
+      return uploadToStorage(tempOutputFilePath, ".pdf");
+    }, { extension: ".pdf" });
+  }, { extension: ".html" });
 }
 const app = new Koa();
 const router = new Router();
