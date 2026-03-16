@@ -30,7 +30,7 @@
     "koa": "^2.13.4",
     "koa-body": "^5.0.0",
     "pagedjs": "^0.3.5",
-    "pagedjs-cli": "github:pubpub/pagedjs-cli#198b65ce0e3e089176c294de7a855e8da8a46a23",
+    "pagedjs-cli": "github:pubpub/pagedjs-cli#0d5148f8e4ded0d7c1bf9167e5caf63375519a12",
     "tempy": "^3.0.0"
   },
   "devDependencies": {
